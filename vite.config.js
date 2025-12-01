@@ -8,5 +8,5 @@ export default defineConfig({
     react(),
     tailwindcss(), // 2. Add it to the plugins array
   ],
-  base: '/repo-name/', // Replace 'repo-name' with your GitHub repository name
+  base: '/CGPA-Cal/', // Corrected to match the GitHub repository name
 })
