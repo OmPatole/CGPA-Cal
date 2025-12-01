@@ -1,0 +1,27 @@
+@import "tailwindcss";
+
+/* Optional: Set a global dark background to prevent white flashes */
+@theme {
+  --color-background: #0a0a0a;
+  --color-text: #e0e0e0;
+}
+
+body {
+  background-color: var(--color-background);
+  color: var(--color-text);
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Hide scrollbar for clean UI in horizontal lists */
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
+}
+.scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
