@@ -1,98 +1,35 @@
-🎓 CGPA Calculator
+# 🎓 CGPA Calculator
 
-A clean, efficient, and user-friendly web application built with React and Vite to help students calculate their Cumulative Grade Point Average.
+A clean, efficient, and user-friendly web application built with React and Vite for calculating Cumulative Grade Point Average.
 
-🚀 Live Demo
+[**👉 View Live Demo**](https://ompatole.github.io/CGPA-Cal/)
 
-Check out the live application here:
-👉 View Deployment
+## Key Features
+* **Fast & Responsive:** Built with Vite; mobile-friendly.
+* **Real-time Calculation:** Instant updates as grades are input.
+* **Dynamic Inputs:** Add/remove subjects easily.
 
-📖 About The Project
+## Tech Stack
+* **React**
+* **Vite**
+* **GitHub Pages**
 
-Calculating CGPA manually can be tedious and prone to errors. This application simplifies the process by providing an intuitive interface where students can input their subjects, credits, and grades to instantly get their semester or cumulative GPA.
+## 💻 Getting Started
 
-Key Features
+### Prerequisites
+* Node.js
 
-⚡ Blazing Fast: Built on top of Vite for rapid performance.
+### Installation
 
-📱 Responsive Design: Works seamlessly on desktops, tablets, and mobile phones.
-
-✅ Instant Calculation: Real-time updates as you input your grades.
-
-🔄 Dynamic Inputs: Easily add or remove subjects/semesters as needed.
-
-🛠️ Tech Stack
-
-This project works using the following technologies:
-
-React: Frontend library for building the user interface.
-
-Vite: Next Generation Frontend Tooling for fast build and HMR.
-
-GitHub Pages: For seamless deployment and hosting.
-
-ESLint: For maintaining code quality.
-
-💻 Getting Started Locally
-
-Follow these steps to set up the project locally on your machine.
-
-Prerequisites
-
-Make sure you have Node.js installed on your system.
-
-Installation
-
-Clone the repository
-
+```bash
+# Clone the repository
 git clone [https://github.com/ompatole/CGPA-Cal.git](https://github.com/ompatole/CGPA-Cal.git)
 
-
-Navigate to the project directory
-
+# Navigate to directory
 cd CGPA-Cal
 
-
-Install dependencies
-
+# Install dependencies
 npm install
 
-
-Start the development server
-
+# Start development server
 npm run dev
-
-
-Open your browser and navigate to the local URL shown in the terminal (usually http://localhost:5173).
-
-🧮 How to Use
-
-Open the Live Link.
-
-Enter the Subject Name (Optional).
-
-Enter the Credit Points for the subject.
-
-Enter the Grade/Score obtained.
-
-Click Add Subject to include more courses.
-
-Your GPA/CGPA will automatically reflect at the bottom.
-
-🤝 Contributing
-
-Contributions are what make the open-source community such an amazing place to learn, inspire, and create. Any contributions you make are greatly appreciated.
-
-Fork the Project
-
-Create your Feature Branch (git checkout -b feature/AmazingFeature)
-
-Commit your Changes (git commit -m 'Add some AmazingFeature')
-
-Push to the Branch (git push origin feature/AmazingFeature)
-
-Open a Pull Request
-
-📝 License
-
-Distributed under the MIT License. See LICENSE for more information.
