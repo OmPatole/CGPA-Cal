@@ -4,7 +4,7 @@ import { Trash2 } from 'lucide-react';
 import { GRADE_SCALE, calculateGradeFromMarks, getGradePoint } from '../../utils/constants';
 
 const CourseRow = ({ course, index, updateCourse, removeCourse }) => {
-  const [mode, setMode] = useState('marks'); // 'marks' or 'grade'
+  const [mode, setMode] = useState('marks'); 
 
   useEffect(() => {
     if (mode === 'marks') {
@@ -37,6 +37,12 @@ const CourseRow = ({ course, index, updateCourse, removeCourse }) => {
     }
     updateCourse(index, field, value);
   };
+
+  // Determine if External column should be shown (Only if extMax > 0)
+  const showExternal = parseFloat(course.extMax) > 0;
+
+  // LOCKING LOGIC: Use new isLocked flag, falling back to isTheory for backward compatibility
+  const isLocked = course.isLocked !== undefined ? course.isLocked : course.isTheory;
 
   return (
     <div className="bg-[#1e1e1e] p-4 rounded-lg mb-3 border border-[#333] shadow-sm transition-all hover:border-[#444]">
@@ -86,15 +92,16 @@ const CourseRow = ({ course, index, updateCourse, removeCourse }) => {
       </div>
 
       {mode === 'marks' ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+        <div className={`grid ${showExternal ? 'grid-cols-2' : 'grid-cols-1'} gap-4`}>
+            {/* Internal Marks Column */}
             <div>
-                <label className="block text-[10px] text-gray-500 mb-1 uppercase">Internal (ISE)</label>
+                <label className="block text-[10px] text-gray-500 mb-1 uppercase">Internal (ISE/IE)</label>
                 <div className="flex items-center gap-2">
                     <input 
                         type="number" 
                         placeholder="Obt"
                         value={course.intObt}
-                        onChange={(e) => handleMarksChange('intObt', e.target.value, parseFloat(course.intMax))}
+                        onChange={(e) => handleMarksChange('intObt', e.target.value, parseFloat(course.intMax) || 0)}
                         className="bg-[#252525] text-white w-full p-2 rounded text-sm focus:ring-1 focus:ring-[#555] outline-none"
                     />
                     <span className="text-gray-600">/</span>
@@ -102,12 +109,19 @@ const CourseRow = ({ course, index, updateCourse, removeCourse }) => {
                         type="number" 
                         placeholder="Max"
                         value={course.intMax}
-                        readOnly={course.isTheory}
+                        readOnly={isLocked} // <--- NOW UNCHANGEABLE FOR ALL STANDARD COURSES
                         onChange={(e) => updateCourse(index, 'intMax', e.target.value)}
-                        className={`w-full p-2 rounded text-sm focus:ring-1 focus:ring-[#555] outline-none ${course.isTheory ? 'bg-[#1a1a1a] text-gray-500 cursor-not-allowed' : 'bg-[#252525] text-gray-400'}`}
+                        className={`w-full p-2 rounded text-sm focus:ring-1 focus:ring-[#555] outline-none ${
+                            isLocked 
+                            ? 'bg-[#1a1a1a] text-gray-500 cursor-not-allowed' 
+                            : 'bg-[#252525] text-gray-400'
+                        }`}
                     />
                 </div>
             </div>
+            
+            {/* External Marks Column (Only shown if Max > 0) */}
+            {showExternal && (
             <div>
                 <label className="block text-[10px] text-gray-500 mb-1 uppercase">
                     {course.isTheory ? 'Theory (ESE)' : 'External (ESE/EE)'}
@@ -117,7 +131,7 @@ const CourseRow = ({ course, index, updateCourse, removeCourse }) => {
                         type="number" 
                         placeholder="Obt"
                         value={course.extObt}
-                        onChange={(e) => handleMarksChange('extObt', e.target.value, parseFloat(course.extMax))}
+                        onChange={(e) => handleMarksChange('extObt', e.target.value, parseFloat(course.extMax) || 0)}
                         className="bg-[#252525] text-white w-full p-2 rounded text-sm focus:ring-1 focus:ring-[#555] outline-none"
                     />
                     <span className="text-gray-600">/</span>
@@ -125,12 +139,17 @@ const CourseRow = ({ course, index, updateCourse, removeCourse }) => {
                         type="number" 
                         placeholder="Max"
                         value={course.extMax}
-                        readOnly={course.isTheory}
+                        readOnly={isLocked} // <--- NOW UNCHANGEABLE FOR ALL STANDARD COURSES
                         onChange={(e) => updateCourse(index, 'extMax', e.target.value)}
-                        className={`w-full p-2 rounded text-sm focus:ring-1 focus:ring-[#555] outline-none ${course.isTheory ? 'bg-[#1a1a1a] text-gray-500 cursor-not-allowed' : 'bg-[#252525] text-gray-400'}`}
+                        className={`w-full p-2 rounded text-sm focus:ring-1 focus:ring-[#555] outline-none ${
+                            isLocked 
+                            ? 'bg-[#1a1a1a] text-gray-500 cursor-not-allowed' 
+                            : 'bg-[#252525] text-gray-400'
+                        }`}
                     />
                 </div>
             </div>
+            )}
         </div>
       ) : (
         <div className="mt-2">

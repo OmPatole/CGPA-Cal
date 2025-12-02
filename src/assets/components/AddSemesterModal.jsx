@@ -18,8 +18,11 @@ const AddSemesterModal = ({ isOpen, onClose, onAdd }) => {
             grade: '', 
             intObt: '',
             extObt: '',
-            intMax: c.intMax || 30,
-            extMax: c.extMax || 70
+            // FIX: Use ?? to ensure 0 marks are respected (not defaulted to 30/70)
+            intMax: c.intMax ?? 30,
+            extMax: c.extMax ?? 70,
+            // NEW: Lock all standard courses so Max Marks are unchangeable
+            isLocked: true 
         }));
 
         onAdd(presetCourses, `${selectedYear} - ${selectedSem}`);
