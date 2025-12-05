@@ -1,23 +1,26 @@
 @import "tailwindcss";
 
-/* Optional: Set a global dark background to prevent white flashes */
 @theme {
-  --color-background: #0a0a0a;
-  --color-text: #e0e0e0;
+  --color-background: #09090b; /* Zinc 950 */
+  --color-text: #f4f4f5;       /* Zinc 100 */
 }
 
 body {
   background-color: var(--color-background);
   color: var(--color-text);
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Hide scrollbar for clean UI in horizontal lists */
+/* Smooth transitions for all interactive elements */
+button, input, div {
+  transition-property: color, background-color, border-color, transform, opacity;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 200ms;
+}
+
 .scrollbar-hide::-webkit-scrollbar {
     display: none;
 }

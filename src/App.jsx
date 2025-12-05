@@ -1,6 +1,6 @@
 // src/App.jsx
 import React, { useState, useEffect } from 'react';
-import { Plus, RotateCcw, Calculator } from 'lucide-react';
+import { Plus, RotateCcw, Calculator, GraduationCap, Github, Mail, Linkedin } from 'lucide-react';
 
 // Import components
 import SemesterCard from './assets/components/SemesterCard';
@@ -73,62 +73,112 @@ export default function App() {
     setIsResetModalOpen(false);
   };
 
-  // Extract titles to check for duplicates in the modal
   const existingSemesterTitles = semesters.map(s => s.title);
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-[#e0e0e0] font-sans selection:bg-[#a8d5ba] selection:text-black">
+    <div className="min-h-screen flex flex-col bg-zinc-950 text-zinc-100 font-sans selection:bg-emerald-500/30 selection:text-emerald-200">
       {/* Header */}
-      <div className="sticky top-0 z-10 bg-[#0a0a0a]/90 backdrop-blur-md border-b border-[#222] p-4">
-        <div className="max-w-2xl mx-auto flex justify-between items-center">
+      <div className="sticky top-0 z-10 bg-zinc-950/80 backdrop-blur-xl border-b border-zinc-800 p-4 shadow-sm">
+        <div className="max-w-3xl mx-auto flex justify-between items-center">
             <div className="flex items-center gap-3">
-                <div className="bg-[#a8d5ba] p-2 rounded-lg text-black">
-                    <Calculator size={24} />
+                <div className="bg-emerald-500/10 p-2.5 rounded-xl text-emerald-400 border border-emerald-500/20">
+                    <GraduationCap size={24} />
                 </div>
                 <div>
-                    <h1 className="font-bold text-lg tracking-tight">CGPA Calculator</h1>
-                    <p className="text-[10px] text-gray-500 uppercase tracking-wider">School of Engineering and Technology</p>
+                    <h1 className="font-bold text-xl tracking-tight text-white">CGPA Calculator</h1>
+                    <p className="text-[11px] text-zinc-500 uppercase tracking-wider font-medium">School of Engineering & Technology</p>
                 </div>
             </div>
             
             <div className="text-right">
-                <span className="block text-[10px] text-gray-500 uppercase tracking-widest mb-1">Total CGPA</span>
-                <span className="text-3xl font-mono font-bold text-[#a8d5ba]">{calculateCGPA()}</span>
+                <span className="block text-[10px] text-zinc-500 uppercase tracking-widest font-semibold mb-0.5">Total CGPA</span>
+                <span className="text-3xl font-mono font-bold text-emerald-400 drop-shadow-sm">{calculateCGPA()}</span>
             </div>
         </div>
       </div>
 
       {/* Main Content */}
-      <main className="max-w-2xl mx-auto p-4 pb-24">
-        {semesters.map((sem, idx) => (
-            <SemesterCard 
-                key={idx} 
-                semester={sem} 
-                semIndex={idx} 
-                updateSemester={updateSemester}
-                removeSemester={removeSemester}
-            />
-        ))}
+      <main className="max-w-3xl mx-auto w-full p-4 flex-grow">
+        <div className="space-y-6">
+            {semesters.map((sem, idx) => (
+                <SemesterCard 
+                    key={idx} 
+                    semester={sem} 
+                    semIndex={idx} 
+                    updateSemester={updateSemester}
+                    removeSemester={removeSemester}
+                />
+            ))}
+        </div>
 
-        <div className="mt-8 flex flex-col gap-4 items-center justify-center text-center">
+        <div className="mt-10 flex flex-col gap-6 items-center justify-center text-center">
             {semesters.length === 0 && (
-                <div className="text-gray-600 mb-4 p-8 border border-dashed border-[#333] rounded-xl w-full">
-                    <p className="mb-2">No semesters added yet.</p>
-                    <p className="text-sm">Click below to calculate your CGPA.</p>
+                <div className="text-zinc-500 p-10 border-2 border-dashed border-zinc-800 rounded-2xl w-full bg-zinc-900/30">
+                    <div className="bg-zinc-800/50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-zinc-600">
+                        <Calculator size={32} />
+                    </div>
+                    <p className="mb-2 font-medium text-zinc-300">No semesters added yet</p>
+                    <p className="text-sm">Add your first semester to start calculating.</p>
                 </div>
             )}
             
             <button 
                 onClick={() => setIsModalOpen(true)}
-                className="group flex items-center gap-3 bg-[#1a1a1a] hover:bg-[#222] text-gray-300 px-6 py-3 rounded-xl border border-[#333] transition-all w-full justify-center"
+                className="group flex items-center gap-3 bg-zinc-100 hover:bg-white text-zinc-900 px-8 py-4 rounded-2xl font-bold shadow-lg shadow-zinc-900/50 transition-all hover:scale-[1.02] active:scale-[0.98]"
             >
-                <div className="bg-[#333] group-hover:bg-[#444] p-1 rounded-full transition-colors">
-                    <Plus size={18} />
+                <div className="bg-zinc-300 group-hover:bg-zinc-200 p-1 rounded-full transition-colors">
+                    <Plus size={20} />
                 </div>
                 <span>Add Semester</span>
             </button>
         </div>
       </main>
+
+      {/* Footer */}
+      <footer className="w-full border-t border-zinc-900 bg-zinc-950/50 py-4 mt-8">
+        <div className="max-w-3xl mx-auto px-4 flex flex-col items-center gap-2 text-center">
+            <div className="flex items-center gap-2 text-zinc-500 text-xs">
+                <span>&copy; {new Date().getFullYear()} Om Patole. All rights reserved.</span>
+            </div>
+            
+            <div className="flex items-center gap-5">
+                <a 
+                    href="https://github.com/ompatole" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1.5 text-zinc-400 hover:text-white transition-colors text-xs font-medium"
+                >
+                    <Github size={12} />
+                    <span>GitHub</span>
+                </a>
+                <a 
+                    href="https://www.linkedin.com/in/om-patole" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1.5 text-zinc-400 hover:text-white transition-colors text-xs font-medium"
+                >
+                    <Linkedin size={12} />
+                    <span>LinkedIn</span>
+                </a>
+                <a 
+                    href="mailto:ompatole3030@gmail.com" 
+                    className="flex items-center gap-1.5 text-zinc-400 hover:text-white transition-colors text-xs font-medium"
+                >
+                    <Mail size={12} />
+                    <span>Contact</span>
+                </a>
+            </div>
+
+            <div className="text-[10px] text-zinc-600 flex items-center gap-1.5">
+                <span>Built with</span>
+                <span className="text-zinc-500">React</span>
+                <span className="w-0.5 h-0.5 rounded-full bg-zinc-700"></span>
+                <span className="text-zinc-500">Vite</span>
+                <span className="w-0.5 h-0.5 rounded-full bg-zinc-700"></span>
+                <span className="text-zinc-500">Tailwind</span>
+            </div>
+        </div>
+      </footer>
 
       <AddSemesterModal 
         isOpen={isModalOpen} 
@@ -144,14 +194,14 @@ export default function App() {
         message="Are you sure you want to clear all data? This cannot be undone."
       />
 
-      {/* Footer Controls */}
-      <div className="fixed bottom-6 right-6 flex gap-2">
+      {/* Floating Reset Button */}
+      <div className="fixed bottom-8 right-8 z-20">
         <button 
             onClick={handleResetClick}
-            className="p-3 bg-[#1a1a1a] hover:bg-[#ff6b6b] hover:text-white text-gray-400 rounded-full shadow-lg border border-[#333] transition-colors"
-            title="Reset All"
+            className="p-4 bg-zinc-800 hover:bg-rose-500 hover:text-white text-zinc-400 rounded-full shadow-2xl border border-zinc-700 hover:border-rose-400 transition-all hover:rotate-180 duration-500"
+            title="Reset All Data"
         >
-            <RotateCcw size={20} />
+            <RotateCcw size={22} />
         </button>
       </div>
     </div>

@@ -1,6 +1,6 @@
 // src/components/SemesterCard.jsx
 import React, { useState } from 'react';
-import { Plus, ChevronDown, ChevronUp, BookOpen } from 'lucide-react';
+import { Plus, ChevronDown, ChevronUp, BookOpen, Trash2 } from 'lucide-react';
 import CourseRow from './CourseRow';
 import { getGradePoint } from '../../utils/constants';
 
@@ -49,54 +49,58 @@ const SemesterCard = ({ semester, semIndex, updateSemester, removeSemester }) =>
   })();
 
   return (
-    <div className="bg-[#121212] rounded-xl overflow-hidden mb-6 shadow-lg border border-[#222]">
+    <div className="bg-zinc-900/50 rounded-2xl overflow-hidden border border-zinc-800 shadow-sm hover:border-zinc-700 transition-colors">
       <div 
-        className="bg-[#1a1a1a] p-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 cursor-pointer select-none"
+        className="bg-zinc-900 p-5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 cursor-pointer select-none group"
         onClick={() => setIsExpanded(!isExpanded)}
       >
-        <div className="flex items-center gap-3 w-full sm:w-auto">
-            <div className={`p-2 rounded-lg bg-[#222] text-[#a8d5ba]`}>
-                <BookOpen size={18} />
+        <div className="flex items-center gap-4 w-full sm:w-auto">
+            <div className={`p-2.5 rounded-xl bg-zinc-800 text-zinc-400 group-hover:text-emerald-400 group-hover:bg-zinc-700 transition-all`}>
+                <BookOpen size={20} />
             </div>
             <div>
-                <h3 className="text-[#e0e0e0] font-semibold">{semester.title}</h3>
-                <span className="text-xs text-gray-500">{semester.courses.length} Courses</span>
+                <h3 className="text-zinc-100 font-bold text-lg">{semester.title}</h3>
+                <span className="text-xs text-zinc-500 font-medium">{semester.courses.length} Courses</span>
             </div>
         </div>
         
-        <div className="flex items-center justify-between sm:justify-end w-full sm:w-auto gap-4 sm:pl-0 pl-12">
+        <div className="flex items-center justify-between sm:justify-end w-full sm:w-auto gap-6 sm:pl-0 pl-14">
             <div className="text-right">
-                <span className="block text-[10px] text-gray-500 uppercase tracking-widest">SGPA</span>
-                <span className="text-xl font-mono text-[#8ab4f8]">{sgpa}</span>
+                <span className="block text-[10px] text-zinc-500 uppercase tracking-widest font-semibold">SGPA</span>
+                <span className="text-2xl font-mono text-emerald-400 font-bold">{sgpa}</span>
             </div>
-            {isExpanded ? <ChevronUp size={20} className="text-gray-600" /> : <ChevronDown size={20} className="text-gray-600" />}
+            <div className="p-1 rounded-full hover:bg-zinc-800">
+                {isExpanded ? <ChevronUp size={20} className="text-zinc-500" /> : <ChevronDown size={20} className="text-zinc-500" />}
+            </div>
         </div>
       </div>
 
       {isExpanded && (
-        <div className="p-4">
-          {semester.courses.map((course, idx) => (
-            <CourseRow 
-                key={idx} 
-                index={idx} 
-                course={course} 
-                updateCourse={updateCourse} 
-                removeCourse={removeCourse} 
-            />
-          ))}
+        <div className="p-5 bg-zinc-900/30">
+          <div className="space-y-3">
+            {semester.courses.map((course, idx) => (
+                <CourseRow 
+                    key={idx} 
+                    index={idx} 
+                    course={course} 
+                    updateCourse={updateCourse} 
+                    removeCourse={removeCourse} 
+                />
+            ))}
+          </div>
 
-          <div className="flex justify-between items-center mt-4 pt-2 border-t border-[#222]">
+          <div className="flex justify-between items-center mt-6 pt-4 border-t border-zinc-800/50">
             <button 
                 onClick={addCourse}
-                className="flex items-center gap-2 text-sm text-[#a8d5ba] hover:text-[#8fc4a3] transition-colors"
+                className="flex items-center gap-2 text-sm font-medium text-emerald-400 hover:text-emerald-300 transition-colors py-2 px-3 hover:bg-emerald-500/10 rounded-lg"
             >
                 <Plus size={16} /> Add Custom Course
             </button>
             <button 
                 onClick={() => removeSemester(semIndex)}
-                className="text-xs text-[#d5a8a8] hover:text-[#ff6b6b] transition-colors"
+                className="flex items-center gap-2 text-xs font-medium text-rose-400 hover:text-rose-300 py-2 px-3 hover:bg-rose-500/10 rounded-lg transition-colors"
             >
-                Remove Semester
+                <Trash2 size={14} /> Remove Semester
             </button>
           </div>
         </div>
