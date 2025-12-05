@@ -73,6 +73,9 @@ export default function App() {
     setIsResetModalOpen(false);
   };
 
+  // Extract titles to check for duplicates in the modal
+  const existingSemesterTitles = semesters.map(s => s.title);
+
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-[#e0e0e0] font-sans selection:bg-[#a8d5ba] selection:text-black">
       {/* Header */}
@@ -131,6 +134,7 @@ export default function App() {
         isOpen={isModalOpen} 
         onClose={() => setIsModalOpen(false)} 
         onAdd={addSemester}
+        existingSemesters={existingSemesterTitles}
       />
 
       <ConfirmModal 

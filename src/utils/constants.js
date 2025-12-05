@@ -129,3 +129,19 @@ export const getGradePoint = (grade) => {
   const g = GRADE_SCALE.find(i => i.grade === grade);
   return g ? g.point : 0;
 };
+
+// New function for Re-exam penalty logic (R.B.T. 15)
+export const getPenalizedGrade = (grade) => {
+    if (!grade || grade === 'FF') return grade;
+    const index = GRADE_SCALE.findIndex(g => g.grade === grade);
+    
+    // If grade not found or it's already the lowest passing grade (DD), return as is
+    // GRADE_SCALE indices: 0:AA, 1:AB ... 6:DD, 7:FF
+    if (index === -1) return grade;
+    
+    // Apply penalty: shift index by +1 (lower grade), but don't go beyond DD (index 6)
+    // We do not want to fail a student (FF) just because of penalty if they passed
+    const newIndex = Math.min(index + 1, 6); 
+    
+    return GRADE_SCALE[newIndex].grade;
+};

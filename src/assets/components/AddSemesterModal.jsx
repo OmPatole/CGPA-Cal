@@ -1,31 +1,34 @@
-// src/components/AddSemesterModal.jsx
+// src/assets/components/AddSemesterModal.jsx
 import React, { useState } from 'react';
-import { X } from 'lucide-react';
+import { X, AlertCircle } from 'lucide-react';
 import { SEMESTER_DATA } from '../../utils/constants';
 
-const AddSemesterModal = ({ isOpen, onClose, onAdd }) => {
+const AddSemesterModal = ({ isOpen, onClose, onAdd, existingSemesters = [] }) => {
     const [selectedYear, setSelectedYear] = useState('');
     const [selectedSem, setSelectedSem] = useState('');
 
     const years = Object.keys(SEMESTER_DATA);
     const semesters = selectedYear ? Object.keys(SEMESTER_DATA[selectedYear]) : [];
+    
+    const constructedTitle = `${selectedYear} - ${selectedSem}`;
+    const isDuplicate = existingSemesters.includes(constructedTitle);
 
     const handleAdd = () => {
-        if (!selectedYear || !selectedSem) return;
+        // Fixed syntax error here (removed 'Hz')
+        if (!selectedYear || !selectedSem || isDuplicate) return;
         
         const presetCourses = SEMESTER_DATA[selectedYear][selectedSem].map(c => ({
             ...c,
             grade: '', 
             intObt: '',
             extObt: '',
-            // FIX: Use ?? to ensure 0 marks are respected (not defaulted to 30/70)
             intMax: c.intMax ?? 30,
             extMax: c.extMax ?? 70,
-            // NEW: Lock all standard courses so Max Marks are unchangeable
-            isLocked: true 
+            isLocked: true,
+            isReExam: false // Initialize re-exam state
         }));
 
-        onAdd(presetCourses, `${selectedYear} - ${selectedSem}`);
+        onAdd(presetCourses, constructedTitle);
         onClose();
         setSelectedYear('');
         setSelectedSem('');
@@ -84,16 +87,23 @@ const AddSemesterModal = ({ isOpen, onClose, onAdd }) => {
                         </div>
                     )}
 
+                    {isDuplicate && (
+                        <div className="flex items-center gap-2 p-3 bg-red-900/20 border border-red-900/50 rounded-lg text-red-200 text-sm">
+                            <AlertCircle size={16} />
+                            <span>This semester has already been added.</span>
+                        </div>
+                    )}
+
                     <button
-                        disabled={!selectedYear || !selectedSem}
+                        disabled={!selectedYear || !selectedSem || isDuplicate}
                         onClick={handleAdd}
                         className={`w-full py-4 rounded-xl mt-4 font-bold transition-all ${
-                            selectedYear && selectedSem 
+                            selectedYear && selectedSem && !isDuplicate
                             ? 'bg-[#e0e0e0] text-black hover:bg-white' 
                             : 'bg-[#333] text-gray-500 cursor-not-allowed'
                         }`}
                     >
-                        Load Subjects
+                        {isDuplicate ? 'Already Added' : 'Load Subjects'}
                     </button>
                 </div>
             </div>
