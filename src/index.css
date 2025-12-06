@@ -27,4 +27,46 @@ button, input, div {
 .scrollbar-hide {
     -ms-overflow-style: none;
     scrollbar-width: none;
+}@import "tailwindcss";
+
+@theme {
+  --color-background: #09090b; /* Zinc 950 */
+  --color-text: #f4f4f5;       /* Zinc 100 */
+}
+
+body {
+  background-color: var(--color-background);
+  color: var(--color-text);
+  margin: 0;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Smooth transitions */
+button, input, div {
+  transition-property: color, background-color, border-color, transform, opacity;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 200ms;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
+}
+.scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+/* --- HIDE NUMBER INPUT SPINNERS --- */
+/* Chrome, Safari, Edge, Opera */
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+  -webkit-appearance: none; 
+  margin: 0; 
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
 }

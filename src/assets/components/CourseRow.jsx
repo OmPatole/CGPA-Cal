@@ -20,12 +20,10 @@ const CourseRow = ({ course, index, updateCourse, removeCourse }) => {
       const intMax = parseFloat(course.intMax) || 0;
       const extMax = parseFloat(course.extMax) || 0;
       
-      const totalObtained = intObt + extObt;
-      const totalMax = intMax + extMax;
-
-      let calculatedGrade = calculateGradeFromMarks(totalObtained, totalMax);
+      const isTheory = course.isTheory !== undefined ? course.isTheory : true;
+      // FIX: Passing all required parameters for precise calculation
+      let calculatedGrade = calculateGradeFromMarks(intObt, intMax, extObt, extMax, isTheory);
       
-      // Apply penalty based on penalty level (0, 1, or 2)
       if (course.penalty > 0) {
         calculatedGrade = getPenalizedGrade(calculatedGrade, course.penalty);
       }
@@ -34,7 +32,7 @@ const CourseRow = ({ course, index, updateCourse, removeCourse }) => {
         updateCourse(index, 'grade', calculatedGrade);
       }
     }
-  }, [course.intObt, course.extObt, course.intMax, course.extMax, course.penalty, mode]);
+  }, [course.intObt, course.extObt, course.intMax, course.extMax, course.penalty, course.isTheory, mode]);
 
   const handleMarksChange = (field, value, maxLimit) => {
     const numVal = parseFloat(value);
@@ -42,6 +40,13 @@ const CourseRow = ({ course, index, updateCourse, removeCourse }) => {
       return; 
     }
     updateCourse(index, field, value);
+  };
+
+  // Block Arrow keys to allow only direct input
+  const preventArrowKeys = (e) => {
+    if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+      e.preventDefault();
+    }
   };
 
   const showExternal = parseFloat(course.extMax) > 0;
@@ -52,30 +57,40 @@ const CourseRow = ({ course, index, updateCourse, removeCourse }) => {
       {/* Header Row */}
       <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between mb-4">
         <div className="flex flex-col w-full sm:flex-1 sm:mr-4">
-             <input 
-              type="text" 
-              value={course.name}
-              onChange={(e) => updateCourse(index, 'name', e.target.value)}
-              placeholder="Course Name"
-              className="bg-transparent text-zinc-200 font-semibold placeholder-zinc-700 focus:outline-none w-full text-base"
-            />
+             <div className="flex items-center gap-2">
+                 <input 
+                  type="text" 
+                  value={course.name}
+                  onChange={(e) => updateCourse(index, 'name', e.target.value)}
+                  placeholder="Course Name"
+                  className="bg-transparent text-zinc-200 font-semibold placeholder-zinc-700 focus:outline-none w-full text-base"
+                />
+                {course.isAudit && (
+                    <span className="text-[10px] bg-zinc-800 text-zinc-400 px-2 py-0.5 rounded-full uppercase tracking-wider font-bold whitespace-nowrap">
+                        Audit
+                    </span>
+                )}
+             </div>
+            
             {/* Exam Type Selector */}
-            <div className="flex items-center gap-2 mt-2">
-                <select
-                    value={course.penalty || 0}
-                    onChange={(e) => updateCourse(index, 'penalty', parseInt(e.target.value))}
-                    className={`text-[11px] font-bold uppercase tracking-wider bg-transparent border rounded-md px-2 py-1 outline-none cursor-pointer transition-colors ${
-                        course.penalty > 0 
-                        ? 'text-rose-400 border-rose-500/50 bg-rose-500/10' 
-                        : 'text-zinc-600 border-zinc-800 hover:border-zinc-600'
-                    }`}
-                >
-                    <option value={0}>Regular Exam</option>
-                    <option value={1}>Re-Exam (1 Grade Drop)</option>
-                    <option value={2}>Repeated (2 Grade Drops)</option>
-                </select>
-                {course.penalty > 0 && <AlertTriangle size={12} className="text-rose-500" />}
-            </div>
+            {!course.isAudit && (
+                <div className="flex items-center gap-2 mt-2">
+                    <select
+                        value={course.penalty || 0}
+                        onChange={(e) => updateCourse(index, 'penalty', parseInt(e.target.value))}
+                        className={`text-[11px] font-bold uppercase tracking-wider bg-transparent border rounded-md px-2 py-1 outline-none cursor-pointer transition-colors ${
+                            course.penalty > 0 
+                            ? 'text-rose-400 border-rose-500/50 bg-rose-500/10' 
+                            : 'text-zinc-600 border-zinc-800 hover:border-zinc-600'
+                        }`}
+                    >
+                        <option value={0}>Regular Exam</option>
+                        <option value={1}>Re-Exam (1 Grade Drop)</option>
+                        <option value={2}>Repeated (2 Grade Drops)</option>
+                    </select>
+                    {course.penalty > 0 && <AlertTriangle size={12} className="text-rose-500" />}
+                </div>
+            )}
         </div>
         
         <div className="flex items-center justify-between w-full sm:w-auto gap-4">
@@ -85,8 +100,8 @@ const CourseRow = ({ course, index, updateCourse, removeCourse }) => {
                 type="number" 
                 value={course.credits}
                 readOnly={isLocked}
+                onKeyDown={preventArrowKeys}
                 onChange={(e) => updateCourse(index, 'credits', parseFloat(e.target.value))}
-                // BOLDED and used EMERALD color for visibility
                 className={`bg-transparent text-center w-8 font-mono font-bold focus:outline-none ${
                     isLocked
                         ? 'text-emerald-400 cursor-not-allowed'
@@ -129,6 +144,7 @@ const CourseRow = ({ course, index, updateCourse, removeCourse }) => {
                         type="number" 
                         placeholder="Obt"
                         value={course.intObt}
+                        onKeyDown={preventArrowKeys}
                         onChange={(e) => handleMarksChange('intObt', e.target.value, parseFloat(course.intMax) || 0)}
                         className="bg-zinc-900 text-white w-full p-2.5 rounded-lg text-sm border border-zinc-800 focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/20 outline-none transition-all placeholder-zinc-700"
                     />
@@ -138,8 +154,8 @@ const CourseRow = ({ course, index, updateCourse, removeCourse }) => {
                         placeholder="Max"
                         value={course.intMax}
                         readOnly={isLocked}
+                        onKeyDown={preventArrowKeys}
                         onChange={(e) => updateCourse(index, 'intMax', e.target.value)}
-                        // Highlighted locked max marks for better visibility
                         className={`w-full p-2.5 rounded-lg text-sm border outline-none transition-all ${
                             isLocked 
                             ? 'bg-emerald-800/20 text-white font-bold border-emerald-800/50 cursor-not-allowed' 
@@ -160,6 +176,7 @@ const CourseRow = ({ course, index, updateCourse, removeCourse }) => {
                         type="number" 
                         placeholder="Obt"
                         value={course.extObt}
+                        onKeyDown={preventArrowKeys}
                         onChange={(e) => handleMarksChange('extObt', e.target.value, parseFloat(course.extMax) || 0)}
                         className="bg-zinc-900 text-white w-full p-2.5 rounded-lg text-sm border border-zinc-800 focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/20 outline-none transition-all placeholder-zinc-700"
                     />
@@ -169,8 +186,8 @@ const CourseRow = ({ course, index, updateCourse, removeCourse }) => {
                         placeholder="Max"
                         value={course.extMax}
                         readOnly={isLocked}
+                        onKeyDown={preventArrowKeys}
                         onChange={(e) => updateCourse(index, 'extMax', e.target.value)}
-                        // Highlighted locked max marks for better visibility
                         className={`w-full p-2.5 rounded-lg text-sm border outline-none transition-all ${
                             isLocked 
                             ? 'bg-emerald-800/20 text-white font-bold border-emerald-800/50 cursor-not-allowed' 
@@ -207,7 +224,6 @@ const CourseRow = ({ course, index, updateCourse, removeCourse }) => {
         <div className="text-xs text-zinc-500 font-medium">
             {mode === 'marks' && (
                 <span>
-                    {/* BOLDED and used EMERALD color for total obtained marks */}
                     Total: <span className="text-emerald-400 font-bold">{((parseFloat(course.intObt)||0) + (parseFloat(course.extObt)||0))}</span>
                     <span className="text-zinc-600"> / </span> 
                     {((parseFloat(course.intMax)||0) + (parseFloat(course.extMax)||0))}

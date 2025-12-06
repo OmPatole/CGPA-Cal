@@ -53,9 +53,13 @@ export default function App() {
     semesters.forEach(sem => {
         sem.courses.forEach(c => {
             if (c.grade && c.grade !== '') { 
-                totalPoints += getGradePoint(c.grade) * c.credits;
-                totalCredits += c.credits;
-                hasGradedCourses = true;
+                // Ensure grade point is valid
+                const gp = getGradePoint(c.grade);
+                if (gp >= 0) {
+                    totalPoints += gp * c.credits;
+                    totalCredits += c.credits;
+                    hasGradedCourses = true;
+                }
             }
         });
     });
@@ -86,7 +90,7 @@ export default function App() {
                 </div>
                 <div>
                     <h1 className="font-bold text-xl tracking-tight text-white">CGPA Calculator</h1>
-                    <p className="text-[11px] text-zinc-500 uppercase tracking-wider font-medium">School of Engineering & Technology</p>
+                    <p className="text-[11px] text-zinc-500 uppercase tracking-wider font-medium">School of Engineering</p>
                 </div>
             </div>
             
@@ -135,12 +139,20 @@ export default function App() {
       </main>
 
       {/* Footer */}
-      <footer className="w-full border-t border-zinc-900 bg-zinc-950/50 py-4 mt-8">
-        <div className="max-w-3xl mx-auto px-4 flex flex-col items-center gap-2 text-center">
-            <div className="flex items-center gap-2 text-zinc-500 text-xs">
-                <span>&copy; {new Date().getFullYear()} Om Patole. All rights reserved.</span>
-            </div>
+      <footer className="w-full border-t border-zinc-900 bg-zinc-950/50 py-6 mt-8">
+        <div className="max-w-3xl mx-auto px-4 flex flex-col items-center gap-4 text-center">
             
+            {/* Reset Button */}
+            <button 
+                onClick={handleResetClick}
+                className="flex items-center gap-2 px-4 py-2 rounded-full bg-zinc-900 border border-zinc-800 text-zinc-400 hover:text-rose-400 hover:border-rose-500/50 transition-all text-xs font-medium group"
+            >
+                <RotateCcw size={14} className="group-hover:-rotate-180 transition-transform duration-500" />
+                <span>Reset All Data</span>
+            </button>
+
+            <div className="w-full max-w-[200px] h-px bg-zinc-900"></div>
+
             <div className="flex items-center gap-5">
                 <a 
                     href="https://github.com/ompatole" 
@@ -152,7 +164,7 @@ export default function App() {
                     <span>GitHub</span>
                 </a>
                 <a 
-                    href="https://www.linkedin.com/in/om-patole" 
+                    href="https://www.linkedin.com/in/ompatole" 
                     target="_blank" 
                     rel="noopener noreferrer"
                     className="flex items-center gap-1.5 text-zinc-400 hover:text-white transition-colors text-xs font-medium"
@@ -161,7 +173,7 @@ export default function App() {
                     <span>LinkedIn</span>
                 </a>
                 <a 
-                    href="mailto:ompatole3030@gmail.com" 
+                    href="mailto:contact@ompatole.com" 
                     className="flex items-center gap-1.5 text-zinc-400 hover:text-white transition-colors text-xs font-medium"
                 >
                     <Mail size={12} />
@@ -169,13 +181,18 @@ export default function App() {
                 </a>
             </div>
 
-            <div className="text-[10px] text-zinc-600 flex items-center gap-1.5">
-                <span>Built with</span>
-                <span className="text-zinc-500">React</span>
-                <span className="w-0.5 h-0.5 rounded-full bg-zinc-700"></span>
-                <span className="text-zinc-500">Vite</span>
-                <span className="w-0.5 h-0.5 rounded-full bg-zinc-700"></span>
-                <span className="text-zinc-500">Tailwind</span>
+            <div className="flex flex-col gap-1.5">
+                <div className="flex items-center justify-center gap-2 text-zinc-500 text-xs">
+                    <span>&copy; {new Date().getFullYear()} Om Patole. All rights reserved.</span>
+                </div>
+                <div className="text-[10px] text-zinc-600 flex items-center justify-center gap-1.5">
+                    <span>Built with</span>
+                    <span className="text-zinc-500">React</span>
+                    <span className="w-0.5 h-0.5 rounded-full bg-zinc-700"></span>
+                    <span className="text-zinc-500">Vite</span>
+                    <span className="w-0.5 h-0.5 rounded-full bg-zinc-700"></span>
+                    <span className="text-zinc-500">Tailwind</span>
+                </div>
             </div>
         </div>
       </footer>
@@ -193,17 +210,6 @@ export default function App() {
         onConfirm={performReset}
         message="Are you sure you want to clear all data? This cannot be undone."
       />
-
-      {/* Floating Reset Button */}
-      <div className="fixed bottom-8 right-8 z-20">
-        <button 
-            onClick={handleResetClick}
-            className="p-4 bg-zinc-800 hover:bg-rose-500 hover:text-white text-zinc-400 rounded-full shadow-2xl border border-zinc-700 hover:border-rose-400 transition-all hover:rotate-180 duration-500"
-            title="Reset All Data"
-        >
-            <RotateCcw size={22} />
-        </button>
-      </div>
     </div>
   );
 }

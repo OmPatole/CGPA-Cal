@@ -1,14 +1,14 @@
 // src/utils/constants.js
 
 export const GRADE_SCALE = [
-  { grade: 'AA', point: 10, min: 90, max: 100 },
-  { grade: 'AB', point: 9, min: 80, max: 89 },
-  { grade: 'BB', point: 8, min: 70, max: 79 },
-  { grade: 'BC', point: 7, min: 60, max: 69 },
-  { grade: 'CC', point: 6, min: 50, max: 59 },
-  { grade: 'CD', point: 5, min: 45, max: 49 },
-  { grade: 'DD', point: 4, min: 40, max: 44 },
-  { grade: 'FF', point: 0, min: 0, max: 39 },
+  { grade: 'AA', point: 10, min: 90 },
+  { grade: 'AB', point: 9, min: 80 },
+  { grade: 'BB', point: 8, min: 70 },
+  { grade: 'BC', point: 7, min: 60 },
+  { grade: 'CC', point: 6, min: 50 },
+  { grade: 'CD', point: 5, min: 45 },
+  { grade: 'DD', point: 4, min: 40 },
+  { grade: 'FF', point: 0, min: 0 },
 ];
 
 export const SEMESTER_DATA = {
@@ -25,6 +25,7 @@ export const SEMESTER_DATA = {
       { name: 'Comp. Programming', credits: 2, intMax: 30, extMax: 70, isTheory: true },
       { name: 'Comp. Programming Lab', credits: 1, intMax: 50, extMax: 0, isTheory: false },
       { name: 'Yoga & Meditation', credits: 1, intMax: 50, extMax: 0, isTheory: false },
+      { name: 'Design Thinking', credits: 0, intMax: 0, extMax: 0, isTheory: false, isAudit: true },
     ],
     'Semester 2 (Chemistry Group)': [
       { name: 'Eng. Chemistry', credits: 3, intMax: 30, extMax: 70, isTheory: true },
@@ -38,6 +39,7 @@ export const SEMESTER_DATA = {
       { name: 'Elec-Electronic Comp', credits: 2, intMax: 30, extMax: 70, isTheory: true },
       { name: 'Elec-Electronic Comp Lab', credits: 1, intMax: 50, extMax: 0, isTheory: false },
       { name: 'Human Rights', credits: 1, intMax: 50, extMax: 0, isTheory: false },
+      { name: 'Prof. Communication', credits: 0, intMax: 0, extMax: 0, isTheory: false, isAudit: true },
     ]
   },
   'Second Year': {
@@ -51,6 +53,7 @@ export const SEMESTER_DATA = {
       { name: 'Data Comm & Net', credits: 3, intMax: 30, extMax: 70, isTheory: true },
       { name: 'Data Comm & Net Lab', credits: 1, intMax: 50, extMax: 0, isTheory: false },
       { name: 'Soft Skills Dev', credits: 1, intMax: 50, extMax: 0, isTheory: false },
+      { name: 'Environmental Studies', credits: 0, intMax: 0, extMax: 0, isTheory: false, isAudit: true },
     ],
     'Semester 4': [
       { name: 'Applied Math-II', credits: 3, intMax: 30, extMax: 70, isTheory: true },
@@ -63,6 +66,7 @@ export const SEMESTER_DATA = {
       { name: 'OOP Lab', credits: 2, intMax: 50, extMax: 50, isTheory: false },
       { name: 'MDM Course I', credits: 3, intMax: 30, extMax: 70, isTheory: true },
       { name: 'Intro Performing Arts', credits: 1, intMax: 50, extMax: 0, isTheory: false },
+      { name: 'Environmental Studies', credits: 0, intMax: 0, extMax: 0, isTheory: false, isAudit: true },
     ]
   },
   'Third Year': {
@@ -115,12 +119,35 @@ export const SEMESTER_DATA = {
   }
 };
 
-export const calculateGradeFromMarks = (obtained, total) => {
-  if (total === 0) return '';
-  const percentage = (obtained / total) * 100;
-  if (percentage >= 90) return 'AA';
-  
-  const gradeObj = GRADE_SCALE.find(g => percentage >= g.min && percentage <= g.max);
+/**
+ * Calculates grade based on marks and R.B.T rules.
+ * @param {number} intObt - Internal Marks Obtained
+ * @param {number} intMax - Internal Max Marks
+ * @param {number} extObt - External Marks Obtained
+ * @param {number} extMax - External Max Marks
+ * @param {boolean} isTheory - True if theory course, false if lab
+ */
+export const calculateGradeFromMarks = (intObt, intMax, extObt, extMax, isTheory) => {
+  const totalMax = intMax + extMax;
+  if (totalMax === 0) return '';
+
+  // Rule 1: Check External Passing (Strict 40%)
+  if (extMax > 0) {
+    if (extObt < 0.4 * extMax) return 'FF';
+  }
+
+  // Rule 2: Check Internal Passing (LABS ONLY - Strict 40%)
+  // Theory internals do NOT have a passing floor (Marksheet evidence: 11/30 PASS).
+  if (!isTheory && intMax > 0) {
+    if (intObt < 0.4 * intMax) return 'FF';
+  }
+
+  // Rule 3: Check Total Passing (40% aggregate)
+  const totalObtained = intObt + extObt;
+  const percentage = (totalObtained / totalMax) * 100;
+
+  // Uses MIN threshold to find grade (e.g. 89.5 >= 80 -> AB)
+  const gradeObj = GRADE_SCALE.find(g => percentage >= g.min);
   return gradeObj ? gradeObj.grade : 'FF';
 };
 
@@ -130,18 +157,10 @@ export const getGradePoint = (grade) => {
   return g ? g.point : 0;
 };
 
-// Updated penalty logic: accepts penalty count (0, 1, or 2)
 export const getPenalizedGrade = (grade, penalty = 0) => {
     if (!grade || grade === 'FF' || penalty === 0) return grade;
-    
-    // Find current index
     const index = GRADE_SCALE.findIndex(g => g.grade === grade);
     if (index === -1) return grade;
-    
-    // Apply penalty: shift index by +penalty, but clamp at 'DD' (index 6)
-    // GRADE_SCALE indices: 0:AA ... 6:DD, 7:FF
-    // We don't want to force failure if they passed, so max index is 6 (DD)
-    const newIndex = Math.min(index + penalty, 6);
-    
+    const newIndex = Math.min(index + penalty, 6); // Cap at DD
     return GRADE_SCALE[newIndex].grade;
 };
