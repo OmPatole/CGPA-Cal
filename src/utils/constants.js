@@ -131,10 +131,14 @@ export const calculateGradeFromMarks = (intObt, intMax, extObt, extMax, isTheory
   const totalMax = intMax + extMax;
   if (totalMax === 0) return '';
 
-  // Rule 1: Check External Passing (Strict 40%)
+  // Rule 1: Check External Passing (Strict 40%) - REMOVED
+  // This rule was causing issues where students with passing aggregate (40+)
+  // but low external marks were getting 'FF'.
+  /*
   if (extMax > 0) {
     if (extObt < 0.4 * extMax) return 'FF';
   }
+  */
 
   // Rule 2: Check Internal Passing (LABS ONLY - Strict 40%)
   // Theory internals do NOT have a passing floor (Marksheet evidence: 11/30 PASS).

@@ -82,8 +82,8 @@ export default function App() {
   return (
     <div className="min-h-screen flex flex-col bg-zinc-950 text-zinc-100 font-sans selection:bg-emerald-500/30 selection:text-emerald-200">
       {/* Header */}
-      <div className="sticky top-0 z-10 bg-zinc-950/80 backdrop-blur-xl border-b border-zinc-800 p-4 shadow-sm">
-        <div className="max-w-3xl mx-auto flex justify-between items-center">
+      <div className="sticky top-0 z-30 bg-zinc-950/80 backdrop-blur-xl border-b border-zinc-800 p-4 shadow-sm">
+        <div className="max-w-5xl mx-auto flex justify-between items-center">
             <div className="flex items-center gap-3">
                 <div className="bg-emerald-500/10 p-2.5 rounded-xl text-emerald-400 border border-emerald-500/20">
                     <GraduationCap size={24} />
@@ -101,58 +101,68 @@ export default function App() {
         </div>
       </div>
 
-      {/* Main Content */}
-      <main className="max-w-3xl mx-auto w-full p-4 flex-grow">
-        <div className="space-y-6">
-            {semesters.map((sem, idx) => (
-                <SemesterCard 
-                    key={idx} 
-                    semester={sem} 
-                    semIndex={idx} 
-                    updateSemester={updateSemester}
-                    removeSemester={removeSemester}
-                />
-            ))}
+      {/* Main Content Area */}
+      {/* We use a grid here to stack the Button Track directly on top of the Content */}
+      <main className="flex-grow w-full max-w-7xl mx-auto grid grid-cols-1 relative">
+        
+        {/* Layer 1: Semester Cards Content */}
+        <div className="flex flex-col items-center p-4 w-full" style={{ gridArea: '1 / 1 / -1 / -1' }}>
+            <div className="w-full max-w-3xl space-y-6">
+                {semesters.map((sem, idx) => (
+                    <SemesterCard 
+                        key={idx} 
+                        semester={sem} 
+                        semIndex={idx} 
+                        updateSemester={updateSemester}
+                        removeSemester={removeSemester}
+                    />
+                ))}
+
+                <div className="mt-10 flex flex-col gap-6 items-center justify-center text-center pb-20">
+                    {semesters.length === 0 && (
+                        <div className="text-zinc-500 p-10 border-2 border-dashed border-zinc-800 rounded-2xl w-full bg-zinc-900/30">
+                            <div className="bg-zinc-800/50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-zinc-600">
+                                <Calculator size={32} />
+                            </div>
+                            <p className="mb-2 font-medium text-zinc-300">No semesters added yet</p>
+                            <p className="text-sm">Add your first semester to start calculating.</p>
+                        </div>
+                    )}
+                    
+                    <button 
+                        onClick={() => setIsModalOpen(true)}
+                        className="group flex items-center gap-3 bg-zinc-100 hover:bg-white text-zinc-900 px-8 py-4 rounded-2xl font-bold shadow-lg shadow-zinc-900/50 transition-all hover:scale-[1.02] active:scale-[0.98]"
+                    >
+                        <div className="bg-zinc-300 group-hover:bg-zinc-200 p-1 rounded-full transition-colors">
+                            <Plus size={20} />
+                        </div>
+                        <span>Add Semester</span>
+                    </button>
+                </div>
+            </div>
         </div>
 
-        <div className="mt-10 flex flex-col gap-6 items-center justify-center text-center">
-            {semesters.length === 0 && (
-                <div className="text-zinc-500 p-10 border-2 border-dashed border-zinc-800 rounded-2xl w-full bg-zinc-900/30">
-                    <div className="bg-zinc-800/50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-zinc-600">
-                        <Calculator size={32} />
-                    </div>
-                    <p className="mb-2 font-medium text-zinc-300">No semesters added yet</p>
-                    <p className="text-sm">Add your first semester to start calculating.</p>
-                </div>
-            )}
-            
-            <button 
-                onClick={() => setIsModalOpen(true)}
-                className="group flex items-center gap-3 bg-zinc-100 hover:bg-white text-zinc-900 px-8 py-4 rounded-2xl font-bold shadow-lg shadow-zinc-900/50 transition-all hover:scale-[1.02] active:scale-[0.98]"
+        {/* Layer 2: Sticky Button Track */}
+        {/* This layer is invisible (pointer-events-none) but spans the full height of the content. 
+            The button inside uses sticky positioning to float at the bottom. */}
+        <div className="w-full h-full pointer-events-none p-6 flex justify-end items-start" style={{ gridArea: '1 / 1 / -1 / -1' }}>
+             <button 
+                onClick={handleResetClick}
+                className="pointer-events-auto sticky top-[85vh] bottom-6 flex items-center gap-2 px-4 py-3 rounded-full bg-zinc-900 border border-zinc-800 text-zinc-400 hover:text-rose-400 hover:border-rose-500/50 transition-all text-xs font-medium group shadow-2xl shadow-black z-50"
+                style={{ top: 'calc(100vh - 5rem)' }} // Fallback for sticky bottom behavior if content is short
+                title="Reset All Data"
             >
-                <div className="bg-zinc-300 group-hover:bg-zinc-200 p-1 rounded-full transition-colors">
-                    <Plus size={20} />
-                </div>
-                <span>Add Semester</span>
+                <RotateCcw size={16} className="group-hover:-rotate-180 transition-transform duration-500" />
+                <span className="font-semibold">Reset All</span>
             </button>
         </div>
+
       </main>
 
       {/* Footer */}
-      <footer className="w-full border-t border-zinc-900 bg-zinc-950/50 py-6 mt-8">
-        <div className="max-w-3xl mx-auto px-4 flex flex-col items-center gap-4 text-center">
+      <footer className="w-full border-t border-zinc-900 bg-zinc-950/50 py-6 mt-auto z-40 relative bg-zinc-950">
+        <div className="max-w-5xl mx-auto px-4 flex flex-col items-center gap-4 text-center">
             
-            {/* Reset Button */}
-            <button 
-                onClick={handleResetClick}
-                className="flex items-center gap-2 px-4 py-2 rounded-full bg-zinc-900 border border-zinc-800 text-zinc-400 hover:text-rose-400 hover:border-rose-500/50 transition-all text-xs font-medium group"
-            >
-                <RotateCcw size={14} className="group-hover:-rotate-180 transition-transform duration-500" />
-                <span>Reset All Data</span>
-            </button>
-
-            <div className="w-full max-w-[200px] h-px bg-zinc-900"></div>
-
             <div className="flex items-center gap-5">
                 <a 
                     href="https://github.com/ompatole" 
