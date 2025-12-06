@@ -21,7 +21,7 @@ const CourseRow = ({ course, index, updateCourse, removeCourse }) => {
       const extMax = parseFloat(course.extMax) || 0;
       
       const isTheory = course.isTheory !== undefined ? course.isTheory : true;
-      // FIX: Passing all required parameters for precise calculation
+      
       let calculatedGrade = calculateGradeFromMarks(intObt, intMax, extObt, extMax, isTheory);
       
       if (course.penalty > 0) {
@@ -42,10 +42,24 @@ const CourseRow = ({ course, index, updateCourse, removeCourse }) => {
     updateCourse(index, field, value);
   };
 
-  // Block Arrow keys to allow only direct input
-  const preventArrowKeys = (e) => {
+  // Improved Key Handler
+  const handleKeyDown = (e) => {
     if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
       e.preventDefault();
+    }
+
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      const inputs = Array.from(document.querySelectorAll('input:not([disabled]):not([readonly])'));
+      const currentIndex = inputs.indexOf(e.target);
+      
+      if (currentIndex !== -1 && currentIndex < inputs.length - 1) {
+        const nextInput = inputs[currentIndex + 1];
+        nextInput.focus();
+        if (nextInput.select) {
+            nextInput.select();
+        }
+      }
     }
   };
 
@@ -58,12 +72,17 @@ const CourseRow = ({ course, index, updateCourse, removeCourse }) => {
       <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between mb-4">
         <div className="flex flex-col w-full sm:flex-1 sm:mr-4">
              <div className="flex items-center gap-2">
+                 {/* Course Name Input - Now Locked for Preset Courses */}
                  <input 
                   type="text" 
                   value={course.name}
                   onChange={(e) => updateCourse(index, 'name', e.target.value)}
+                  onKeyDown={handleKeyDown}
                   placeholder="Course Name"
-                  className="bg-transparent text-zinc-200 font-semibold placeholder-zinc-700 focus:outline-none w-full text-base"
+                  readOnly={isLocked} 
+                  className={`bg-transparent text-zinc-200 font-semibold placeholder-zinc-700 focus:outline-none w-full text-base ${
+                    isLocked ? 'cursor-default' : 'cursor-text'
+                  }`}
                 />
                 {course.isAudit && (
                     <span className="text-[10px] bg-zinc-800 text-zinc-400 px-2 py-0.5 rounded-full uppercase tracking-wider font-bold whitespace-nowrap">
@@ -72,7 +91,6 @@ const CourseRow = ({ course, index, updateCourse, removeCourse }) => {
                 )}
              </div>
             
-            {/* Exam Type Selector */}
             {!course.isAudit && (
                 <div className="flex items-center gap-2 mt-2">
                     <select
@@ -100,7 +118,7 @@ const CourseRow = ({ course, index, updateCourse, removeCourse }) => {
                 type="number" 
                 value={course.credits}
                 readOnly={isLocked}
-                onKeyDown={preventArrowKeys}
+                onKeyDown={handleKeyDown}
                 onChange={(e) => updateCourse(index, 'credits', parseFloat(e.target.value))}
                 className={`bg-transparent text-center w-8 font-mono font-bold focus:outline-none ${
                     isLocked
@@ -144,7 +162,7 @@ const CourseRow = ({ course, index, updateCourse, removeCourse }) => {
                         type="number" 
                         placeholder="Obt"
                         value={course.intObt}
-                        onKeyDown={preventArrowKeys}
+                        onKeyDown={handleKeyDown}
                         onChange={(e) => handleMarksChange('intObt', e.target.value, parseFloat(course.intMax) || 0)}
                         className="bg-zinc-900 text-white w-full p-2.5 rounded-lg text-sm border border-zinc-800 focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/20 outline-none transition-all placeholder-zinc-700"
                     />
@@ -154,7 +172,7 @@ const CourseRow = ({ course, index, updateCourse, removeCourse }) => {
                         placeholder="Max"
                         value={course.intMax}
                         readOnly={isLocked}
-                        onKeyDown={preventArrowKeys}
+                        onKeyDown={handleKeyDown}
                         onChange={(e) => updateCourse(index, 'intMax', e.target.value)}
                         className={`w-full p-2.5 rounded-lg text-sm border outline-none transition-all ${
                             isLocked 
@@ -176,7 +194,7 @@ const CourseRow = ({ course, index, updateCourse, removeCourse }) => {
                         type="number" 
                         placeholder="Obt"
                         value={course.extObt}
-                        onKeyDown={preventArrowKeys}
+                        onKeyDown={handleKeyDown}
                         onChange={(e) => handleMarksChange('extObt', e.target.value, parseFloat(course.extMax) || 0)}
                         className="bg-zinc-900 text-white w-full p-2.5 rounded-lg text-sm border border-zinc-800 focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/20 outline-none transition-all placeholder-zinc-700"
                     />
@@ -186,7 +204,7 @@ const CourseRow = ({ course, index, updateCourse, removeCourse }) => {
                         placeholder="Max"
                         value={course.extMax}
                         readOnly={isLocked}
-                        onKeyDown={preventArrowKeys}
+                        onKeyDown={handleKeyDown}
                         onChange={(e) => updateCourse(index, 'extMax', e.target.value)}
                         className={`w-full p-2.5 rounded-lg text-sm border outline-none transition-all ${
                             isLocked 
