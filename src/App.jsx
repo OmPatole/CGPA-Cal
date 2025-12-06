@@ -174,7 +174,7 @@ export default function App() {
                     <span>GitHub</span>
                 </a>
                 <a 
-                    href="https://www.linkedin.com/in/ompatole" 
+                    href="https://www.linkedin.com/in/om-patole" 
                     target="_blank" 
                     rel="noopener noreferrer"
                     className="flex items-center gap-1.5 text-zinc-400 hover:text-white transition-colors text-xs font-medium"
@@ -183,7 +183,7 @@ export default function App() {
                     <span>LinkedIn</span>
                 </a>
                 <a 
-                    href="mailto:contact@ompatole.com" 
+                    href="mailto:ompatole3030@gmail.com" 
                     className="flex items-center gap-1.5 text-zinc-400 hover:text-white transition-colors text-xs font-medium"
                 >
                     <Mail size={12} />
