@@ -45,12 +45,13 @@ export const SEMESTER_DATA = {
   'Second Year': {
     'Semester 3': [
       { name: 'Applied Math-I', credits: 3, intMax: 30, extMax: 70, isTheory: true },
+      { name: 'Applied Math-I Tut', credits: 1, intMax: 50, extMax: 0, isTheory: false },
       { name: 'Discrete Math Struct', credits: 3, intMax: 30, extMax: 70, isTheory: true },
       { name: 'Digital Sys & Micro', credits: 3, intMax: 30, extMax: 70, isTheory: true },
       { name: 'Digital Sys & Micro Lab', credits: 1, intMax: 50, extMax: 0, isTheory: false },
       { name: 'Data Structures', credits: 3, intMax: 30, extMax: 70, isTheory: true },
       { name: 'Data Structures Lab', credits: 2, intMax: 50, extMax: 50, isTheory: false },
-      { name: 'Data Comm & Net', credits: 3, intMax: 30, extMax: 70, isTheory: true },
+      { name: 'Data Comm & Net', credits: 3, intMax: 0, extMax: 100, isTheory: true },
       { name: 'Data Comm & Net Lab', credits: 1, intMax: 50, extMax: 0, isTheory: false },
       { name: 'Soft Skills Dev', credits: 1, intMax: 50, extMax: 0, isTheory: false },
       { name: 'Environmental Studies', credits: 0, intMax: 0, extMax: 0, isTheory: false, isAudit: true },
@@ -66,7 +67,7 @@ export const SEMESTER_DATA = {
       { name: 'OOP Lab', credits: 2, intMax: 50, extMax: 50, isTheory: false },
       { name: 'MDM Course I', credits: 3, intMax: 30, extMax: 70, isTheory: true },
       { name: 'Intro Performing Arts', credits: 1, intMax: 50, extMax: 0, isTheory: false },
-      { name: 'Environmental Studies', credits: 0, intMax: 0, extMax: 0, isTheory: false, isAudit: true },
+      { name: 'Environmental Studies', credits: 0, intMax: 30, extMax: 70, isTheory: true, isAudit: true },
     ]
   },
   'Third Year': {
@@ -130,15 +131,6 @@ export const SEMESTER_DATA = {
 export const calculateGradeFromMarks = (intObt, intMax, extObt, extMax, isTheory) => {
   const totalMax = intMax + extMax;
   if (totalMax === 0) return '';
-
-  // Rule 1: Check External Passing (Strict 40%) - REMOVED
-  // This rule was causing issues where students with passing aggregate (40+)
-  // but low external marks were getting 'FF'.
-  /*
-  if (extMax > 0) {
-    if (extObt < 0.4 * extMax) return 'FF';
-  }
-  */
 
   // Rule 2: Check Internal Passing (LABS ONLY - Strict 40%)
   // Theory internals do NOT have a passing floor (Marksheet evidence: 11/30 PASS).
